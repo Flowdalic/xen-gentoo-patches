@@ -1,0 +1,32 @@
+diff --git a/src/Makefile b/src/Makefile
+index 758db7e..98426c6 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -4,7 +4,7 @@
+ #
+ 
+ CLEANUP		:=
+-CFLAGS		:=
++CFLAGS		:= -Wno-error=maybe-uninitialized
+ ASFLAGS		:=
+ LDFLAGS		:=
+ HOST_CFLAGS	:=
+@@ -94,7 +94,7 @@ SRCDIRS		+= interface/pxe interface/efi interface/smbios
+ SRCDIRS		+= interface/bofm
+ SRCDIRS		+= interface/xen
+ SRCDIRS		+= interface/hyperv
+-SRCDIRS		+= tests
++#SRCDIRS		+= tests
+ SRCDIRS		+= crypto crypto/mishmash
+ SRCDIRS		+= hci hci/commands hci/tui
+ SRCDIRS		+= hci/mucurses hci/mucurses/widgets
+@@ -174,8 +174,7 @@ everything :
+ 		bin-i386-efi/ipxe.efirom \
+ 		bin-x86_64-efi/ipxe.efi bin-x86_64-efi/ipxe.efidrv \
+ 		bin-x86_64-efi/ipxe.efirom \
+-		bin-i386-linux/tap.linux bin-x86_64-linux/tap.linux \
+-		bin-i386-linux/tests.linux bin-x86_64-linux/tests.linux
++		bin-i386-linux/tap.linux bin-x86_64-linux/tap.linux
+ 
+ ###############################################################################
+ #

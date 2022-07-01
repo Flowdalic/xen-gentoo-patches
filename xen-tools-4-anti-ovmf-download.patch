@@ -1,0 +1,13 @@
+diff --git a/tools/firmware/Makefile b/tools/firmware/Makefile
+index 4b1fda5..b3bfa02 100644
+--- a/tools/firmware/Makefile
++++ b/tools/firmware/Makefile
+@@ -18,7 +18,7 @@ SUBDIRS-$(CONFIG_ROMBIOS) += vgabios
+ SUBDIRS-y += hvmloader
+ 
+ ovmf-dir:
+-	GIT=$(GIT) $(XEN_ROOT)/scripts/git-checkout.sh $(OVMF_UPSTREAM_URL) $(OVMF_UPSTREAM_REVISION) ovmf-dir
++	[ -d ovmf-dir ] || ln -s ovmf-dir-remote ovmf-dir
+ 	cp ovmf-makefile ovmf-dir/Makefile;
+ 
+ seabios-dir:

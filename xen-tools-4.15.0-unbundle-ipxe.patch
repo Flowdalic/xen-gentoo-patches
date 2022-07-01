@@ -1,0 +1,17 @@
+diff --git a/tools/firmware/etherboot/Makefile b/tools/firmware/etherboot/Makefile
+index ed9e113..72f4a8f 100644
+--- a/tools/firmware/etherboot/Makefile
++++ b/tools/firmware/etherboot/Makefile
+@@ -33,12 +33,6 @@ $(ROM): $(ROMS)
+ 	$(MAKE) -C $D/src bin/$(*F).rom
+ 
+ $T:
+-	set -e; if ! $(FETCHER) _$T $(IPXE_TARBALL_URL); then \
+-		$(GIT) clone $(IPXE_GIT_URL) $D.git; \
+-		(cd $D.git && $(GIT) archive --format=tar --prefix=$D/ \
+-		$(IPXE_GIT_TAG) | gzip -n >../_$T); \
+-		rm -rf $D.git; \
+-	fi
+ 	mv _$T $T
+ 
+ $D/src/arch/i386/Makefile: $T Config

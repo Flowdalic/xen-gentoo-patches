@@ -1,0 +1,88 @@
+diff --git a/tools/debugger/gdbsx/gx/Makefile b/tools/debugger/gdbsx/gx/Makefile
+index 3b8467f..dec7bfa 100644
+--- a/tools/debugger/gdbsx/gx/Makefile
++++ b/tools/debugger/gdbsx/gx/Makefile
+@@ -3,6 +3,7 @@ include ../Rules.mk
+ 
+ GX_OBJS := gx_comm.o gx_main.o gx_utils.o gx_local.o
+ GX_HDRS := $(wildcard *.h)
++AR="ar"
+ 
+ .PHONY: all
+ all: gx_all.a
+@@ -18,5 +19,5 @@ distclean: clean
+ #	$(CC) -c $(CFLAGS) -o $@ $<
+ 
+ gx_all.a: $(GX_OBJS) Makefile $(GX_HDRS)
+-	ar cr $@ $(GX_OBJS)        # problem with ld using -m32 
++	$(AR) cr $@ $(GX_OBJS)        # problem with ld using -m32
+ 
+diff --git a/tools/firmware/rombios/Makefile b/tools/firmware/rombios/Makefile
+index 02abdb3..5a9e7fa 100644
+--- a/tools/firmware/rombios/Makefile
++++ b/tools/firmware/rombios/Makefile
+@@ -2,6 +2,7 @@ XEN_ROOT = $(CURDIR)/../../..
+ include $(XEN_ROOT)/tools/Rules.mk
+ 
+ SUBDIRS := 32bit
++CC=gcc
+ 
+ .PHONY: all
+ all: subdirs-all
+@@ -19,7 +20,7 @@ clean: subdirs-clean
+ distclean: clean
+ 
+ BIOS-bochs-latest: rombios.c biossums 32bitgateway.c tcgbios.c
+-	$(CPP) -DBX_SMP_PROCESSORS=1 -P $< > _rombios_.c
++	$(CC) -E -DBX_SMP_PROCESSORS=1 -P $< > _rombios_.c
+ 	bcc -o rombios.s -C-c -D__i86__ -0 -S _rombios_.c
+ 	sed -e 's/^\.text//' -e 's/^\.data//' rombios.s > _rombios_.s
+ 	as86 _rombios_.s -b tmp.bin -u- -w- -g -0 -j -O -l rombios.txt
+@@ -29,6 +30,6 @@ BIOS-bochs-latest: rombios.c biossums 32bitgateway.c tcgbios.c
+ 	rm -f _rombios_.s
+ 
+ biossums: biossums.c
+-	$(HOSTCC) $(HOSTCFLAGS) -o biossums biossums.c
++	$(CC) $(HOSTCFLAGS) -o biossums biossums.c
+ 
+ -include $(DEPS_INCLUDE)
+diff --git a/tools/firmware/vgabios/Makefile b/tools/firmware/vgabios/Makefile
+index 3284812..ca4f42d 100644
+--- a/tools/firmware/vgabios/Makefile
++++ b/tools/firmware/vgabios/Makefile
+@@ -40,7 +40,7 @@ release:
+ 	tar czvf ../$(RELEASE).tgz --exclude CVS -C .. $(RELEASE)/
+ 
+ vgabios.bin: biossums vgabios.c vgabios.h vgafonts.h vgatables.h vbe.h vbe.c vbetables.h
+-	$(GCC) -E -P vgabios.c $(VGABIOS_VERS) -DVBE $(VGABIOS_DATE) > _vgabios_.c
++	$(CC) -E -P vgabios.c $(VGABIOS_VERS) -DVBE $(VGABIOS_DATE) > _vgabios_.c
+ 	$(BCC) -o vgabios.s -C-c -D__i86__ -S -0 _vgabios_.c
+ 	sed -e 's/^\.text//' -e 's/^\.data//' vgabios.s > _vgabios_.s
+ 	$(AS86) _vgabios_.s -b vgabios.bin -u -w- -g -0 -j -O -l vgabios.txt
+@@ -50,7 +50,7 @@ vgabios.bin: biossums vgabios.c vgabios.h vgafonts.h vgatables.h vbe.h vbe.c vbe
+ 	ls -l VGABIOS-lgpl-latest.bin
+ 
+ vgabios.debug.bin: biossums vgabios.c vgabios.h vgafonts.h vgatables.h vbe.h vbe.c vbetables.h
+-	$(GCC) -E -P vgabios.c $(VGABIOS_VERS) -DVBE -DDEBUG $(VGABIOS_DATE) > _vgabios-debug_.c
++	$(CC) -E -P vgabios.c $(VGABIOS_VERS) -DVBE -DDEBUG $(VGABIOS_DATE) > _vgabios-debug_.c
+ 	$(BCC) -o vgabios-debug.s -C-c -D__i86__ -S -0 _vgabios-debug_.c
+ 	sed -e 's/^\.text//' -e 's/^\.data//' vgabios-debug.s > _vgabios-debug_.s
+ 	$(AS86) _vgabios-debug_.s -b vgabios.debug.bin -u -w- -g -0 -j -O -l vgabios.debug.txt
+@@ -60,7 +60,7 @@ vgabios.debug.bin: biossums vgabios.c vgabios.h vgafonts.h vgatables.h vbe.h vbe
+ 	ls -l VGABIOS-lgpl-latest.debug.bin
+ 
+ vgabios-cirrus.bin: biossums vgabios.c vgabios.h vgafonts.h vgatables.h clext.c
+-	$(GCC) -E -P vgabios.c $(VGABIOS_VERS) -DCIRRUS -DPCIBIOS $(VGABIOS_DATE) > _vgabios-cirrus_.c
++	$(CC) -E -P vgabios.c $(VGABIOS_VERS) -DCIRRUS -DPCIBIOS $(VGABIOS_DATE) > _vgabios-cirrus_.c
+ 	$(BCC) -o vgabios-cirrus.s -C-c -D__i86__ -S -0 _vgabios-cirrus_.c
+ 	sed -e 's/^\.text//' -e 's/^\.data//' vgabios-cirrus.s > _vgabios-cirrus_.s
+ 	$(AS86) _vgabios-cirrus_.s -b vgabios-cirrus.bin -u -w- -g -0 -j -O -l vgabios-cirrus.txt
+@@ -70,7 +70,7 @@ vgabios-cirrus.bin: biossums vgabios.c vgabios.h vgafonts.h vgatables.h clext.c
+ 	ls -l VGABIOS-lgpl-latest.cirrus.bin
+ 
+ vgabios-cirrus.debug.bin: biossums vgabios.c vgabios.h vgafonts.h vgatables.h clext.c
+-	$(GCC) -E -P vgabios.c $(VGABIOS_VERS) -DCIRRUS -DCIRRUS_DEBUG -DPCIBIOS $(VGABIOS_DATE) > _vgabios-cirrus-debug_.c
++	$(CC) -E -P vgabios.c $(VGABIOS_VERS) -DCIRRUS -DCIRRUS_DEBUG -DPCIBIOS $(VGABIOS_DATE) > _vgabios-cirrus-debug_.c
+ 	$(BCC) -o vgabios-cirrus-debug.s -C-c -D__i86__ -S -0 _vgabios-cirrus-debug_.c
+ 	sed -e 's/^\.text//' -e 's/^\.data//' vgabios-cirrus-debug.s > _vgabios-cirrus-debug_.s
+ 	$(AS86) _vgabios-cirrus-debug_.s -b vgabios-cirrus.debug.bin -u -w- -g -0 -j -O -l vgabios-cirrus.debug.txt
